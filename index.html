@@ -469,8 +469,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="completionTime">Completion Time (optional)</label>
-                        <input type="text" id="completionTime" placeholder="e.g., 1:45:30 or 45:20" value="1:45:30">
+                        <label for="completionTime">Completion Time</label>
+                        <input type="text" id="completionTime" required placeholder="e.g., 1:45:30 or 45:20"
+                            value="1:45:30">
                     </div>
 
                     <div class="form-group">
@@ -504,6 +505,10 @@
             const totalKm = parseFloat(document.getElementById('totalKm').value);
             const eventType = document.getElementById('eventType').value;
             const completionTime = document.getElementById('completionTime').value;
+            if (!runnerName || isNaN(totalKm) || totalKm <= 0 || !eventType || !completionTime) {
+                alert('Please fill out all fields correctly.');
+                return;
+            }
             generateCertificate(runnerName, totalKm, eventType, completionTime);
 
         });
