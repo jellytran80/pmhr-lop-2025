@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -211,12 +212,12 @@
             /* background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%); */
             background: linear-gradient(0deg, #fbdd09 0%, #186ab4 100%);
             /* border: 6px solid #667eea; */
-            border-radius: 20px;
+            /* border-radius: 20px; */
             padding: 40px;
             width: 100%;
             position: relative;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            animation: certificateAppear 0.8s ease-out;
+            /* box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); */
+            /* animation: certificateAppear 0.8s ease-out; */
         }
 
         @keyframes certificateAppear {
@@ -250,9 +251,8 @@
         }
 
         .certificate-title {
-            font-size: 2rem;
+            font-size: 1.5rem;
             color: #ffffff;
-            /* font-weight: bold; */
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
@@ -274,9 +274,6 @@
             font-size: 2.5rem;
             color: #ffffff;
             margin: 10px 0;
-            /* text-decoration: underline; */
-            /* text-decoration-color: #fbdd09; */
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .runner-awarded {
@@ -364,17 +361,11 @@
 
         .star {
             display: block;
-            background-color: gold;
-            clip-path: polygon(50% 0%,
-                    61% 35%,
-                    98% 35%,
-                    68% 57%,
-                    79% 91%,
-                    50% 70%,
-                    21% 91%,
-                    32% 57%,
-                    2% 35%,
-                    39% 35%);
+            width: 50px;
+            height: 50px;
+            background-image: url('gold_star.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
         }
 
         .star:nth-child(1) {
@@ -459,13 +450,13 @@
                     <div class="form-group">
                         <label for="runnerName">Runner Name</label>
                         <input type="text" id="runnerName" required placeholder="Enter your full name"
-                            value="Nguyễn Văn A">
+                            value="Anh Tran">
                     </div>
 
                     <div class="form-group">
                         <label for="totalKm">Total Distance (km)</label>
-                        <input type="number" id="totalKm" required min="0" step="0.1" placeholder="e.g., 42.2"
-                            value="21.1">
+                        <input type="number" id="totalKm" required min="0" step="0.0001" placeholder="e.g., 42.195"
+                            value="21.0975">
                     </div>
 
                     <div class="form-group">
@@ -483,6 +474,8 @@
                     </div>
 
                     <button type="submit" class="submit-btn">Generate Certificate</button>
+                    <button class="download-btn" style="display: none;" onclick="downloadCertificate()">Download as
+                        Image</button>
 
                 </form>
             </div>
@@ -494,6 +487,7 @@
                         achievement certificate.</p>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -510,7 +504,7 @@
                 return;
             }
             generateCertificate(runnerName, totalKm, eventType, completionTime);
-
+            document.querySelector('.download-btn').style.display = 'block';
         });
 
         function generateCertificate(name, km, eventType, time) {
@@ -569,7 +563,8 @@
             certificateHTML += '<div class="certificate-footer">';
             certificateHTML += '<div class="date">Saigon 12 tháng 8, 2025</div>';
             certificateHTML += '<div style="margin-top: 15px; color: #ffffff; font-style: italic;">';
-            certificateHTML += '"(đã ký và đóng dấu)"';
+            certificateHTML += '<div class="certificate-signature"><img src="pmhr-signature.png" width="100"></div>';
+            certificateHTML += 'Đã ký và đóng dấu';
             certificateHTML += '</div>';
 
             certificateHTML += '<div class="star-container">';
@@ -602,6 +597,29 @@
 
             return `${minutes}:${seconds.toString().padStart(2, '0')}/km`;
         }
+
+        function downloadCertificate() {
+            const certificate = document.querySelector('.certificate');
+
+            if (!certificate) {
+                alert('Please generate a certificate first!');
+                return;
+            }
+
+            html2canvas(certificate, {
+                scale: 2,
+                allowTaint: true,
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(function (canvas) {
+                const image = canvas.toDataURL("image/jpeg");
+                const link = document.createElement('a');
+                link.download = 'certificate.png';
+                link.href = image;
+                link.click();
+            });
+        }
+
 
         document.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('focus', function () {
