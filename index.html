@@ -289,29 +289,29 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             margin: 10px 0;
         }
 
         .stat-item {
             text-align: center;
-            padding: 15px;
+            padding: 10px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .stat-value {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #667eea;
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             color: #666;
-            margin-top: 5px;
+            /* margin-top: 5px; */
         }
 
         .certificate-footer {
@@ -361,7 +361,7 @@
             display: block;
             width: 50px;
             height: 50px;
-            background-image: url('gold_star.svg');
+            /* background-image: url('gold_star.svg'); */
             background-size: contain;
             background-repeat: no-repeat;
         }
@@ -408,7 +408,7 @@
             }
 
             .stats-grid {
-                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .header h1 {
@@ -430,6 +430,31 @@
             .runner-awarded {
                 font-size: 1rem;
             }
+        }
+
+        .photo-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .photo-preview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .runner-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid #667eea;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            display: block;
         }
     </style>
 </head>
@@ -457,9 +482,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="completionTime">Completion Time</label>
-                        <input type="text" id="completionTime" required placeholder="e.g., 1:45:30 or 45:20"
-                            value="30:01:52">
+                        <label for="completionTime">Completion Time (tùy chọn - giờ:phút:giây)</label>
+                        <input type="text" id="completionTime" placeholder="e.g., 1:45:30 or 45:20" value="30:01:52">
                     </div>
 
                     <div class="form-group">
@@ -467,6 +491,14 @@
                         <select id="eventType" required>
                             <option value="Huyền Thoại PMHR 2025">Huyền Thoại PMHR 2025</option>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="runnerPhoto">Runner Photo (tùy chọn - hình vuông nhé)</label>
+                        <input type="file" id="runnerPhoto" accept="image/*">
+                        <div id="photoPreview" class="photo-preview" style="display: none;">
+                            <img id="previewImg" alt="Runner photo preview">
+                        </div>
                     </div>
 
                     <button type="submit" class="submit-btn">Generate Certificate</button>
@@ -496,22 +528,37 @@
         </div>
     </div>
     <script>
+        let selectedPhoto = null;
 
+        document.getElementById('runnerPhoto').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    selectedPhoto = e.target.result;
+                    const preview = document.getElementById('photoPreview');
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = selectedPhoto;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
         document.getElementById('certificateForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const runnerName = document.getElementById('runnerName').value;
             const totalKm = parseFloat(document.getElementById('totalKm').value);
             const eventType = document.getElementById('eventType').value;
             const completionTime = document.getElementById('completionTime').value;
-            if (!runnerName || isNaN(totalKm) || totalKm <= 0 || !eventType || !completionTime) {
+            if (!runnerName || isNaN(totalKm) || totalKm <= 0 || !eventType) {
                 alert('Please fill out all fields correctly.');
                 return;
             }
-            generateCertificate(runnerName, totalKm, eventType, completionTime);
+            generateCertificate(runnerName, totalKm, eventType, completionTime, selectedPhoto);
             document.querySelector('.download-btn').style.display = 'block';
         });
 
-        function generateCertificate(name, km, eventType, time) {
+        function generateCertificate(name, km, eventType, time, photo) {
             const today = new Date().toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
@@ -519,17 +566,23 @@
             });
 
             const pace = time ? calculatePace(km, time) : null;
-            const calories = Math.round(km * 65);
+            const calories = Math.round(km * 65).toLocaleString('vi-VN');
 
             let certificateHTML = '<div class="certificate">';
             certificateHTML += '<div class="certificate-header">';
-            certificateHTML += '<div class="certificate-logo"><img src="pmhr-logo.png" width="60" height="60"></div>';
+            // certificateHTML += '<div class="certificate-logo"><img src="pmhr-logo.png" width="60" height="60"></div>';
             certificateHTML += '<div class="certificate-title">Giấy Chứng Nhận</div>';
             certificateHTML += '</div>';
+
+            if (photo) {
+                certificateHTML += '<img src="' + photo + '" alt="Runner photo" class="runner-photo">';
+            }
 
             certificateHTML += '<div style="text-align: center; margin: 10px 0;">';
             certificateHTML += '<div class="runner-name">' + name + '</div>';
             certificateHTML += '<div class="runner-awarded">Đã hoàn thành Thử thách 45 ngày và được chính thức công nhận là Huyền Thoại của PMHR 2025 (LOP)</div>';
+
+
             certificateHTML += '</div>';
 
             certificateHTML += '<div class="achievement-details">';
@@ -547,7 +600,9 @@
                 certificateHTML += '<div class="stat-value">' + time + '</div>';
                 certificateHTML += '<div class="stat-label">Finish Time</div>';
                 certificateHTML += '</div>';
-            } else {
+            }
+
+            if (calories) {
                 certificateHTML += '<div class="stat-item">';
                 certificateHTML += '<div class="stat-value">' + calories + '</div>';
                 certificateHTML += '<div class="stat-label">Est. Calories Burned</div>';
@@ -567,7 +622,7 @@
             certificateHTML += '<div class="certificate-footer">';
             certificateHTML += '<div class="date">Saigon 12 tháng 8, 2025</div>';
             certificateHTML += '<div style="margin-top: 15px; color: #ffffff; font-style: italic;">';
-            certificateHTML += '<div class="certificate-signature"><img src="pmhr-signature.png" width="100"></div>';
+            // certificateHTML += '<div class="certificate-signature"><img src="pmhr-signature.png" width="100"></div>';
             certificateHTML += 'Đã ký và đóng dấu';
             certificateHTML += '</div>';
 
@@ -613,8 +668,7 @@
             html2canvas(certificate, {
                 scale: 2,
                 allowTaint: true,
-                useCORS: true,
-                backgroundColor: '#ffffff'
+                useCORS: true
             }).then(function (canvas) {
                 const image = canvas.toDataURL("image/jpeg");
                 const link = document.createElement('a');
