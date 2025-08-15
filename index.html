@@ -280,6 +280,16 @@
             color: #ffffff;
         }
 
+        .runner-event-type {
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
         .achievement-details {
             background: rgba(102, 126, 234, 0.05);
             padding: 20px;
@@ -396,6 +406,31 @@
             transform: translateY(15px) rotate(15deg);
         }
 
+        .photo-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .photo-preview img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .runner-photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 8px solid #667eea;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -431,31 +466,6 @@
                 font-size: 1rem;
             }
         }
-
-        .photo-preview {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .photo-preview img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #667eea;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .runner-photo {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 8px solid #667eea;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            margin: 20px auto;
-            display: block;
-        }
     </style>
 </head>
 
@@ -472,24 +482,24 @@
                 <form id="certificateForm">
                     <div class="form-group">
                         <label for="runnerName">Runner Name</label>
-                        <input type="text" id="runnerName" required placeholder="Enter your full name" value="Anh Tran">
+                        <input type="text" id="runnerName" required placeholder="Enter your full name">
                     </div>
 
                     <div class="form-group">
                         <label for="totalKm">Total Distance (km)</label>
-                        <input type="number" id="totalKm" required min="0" step="0.0001" placeholder="e.g., 42.195"
-                            value="257.2">
+                        <input type="number" id="totalKm" required min="0" step="0.0001" placeholder="e.g., 42.195">
                     </div>
 
                     <div class="form-group">
                         <label for="completionTime">Completion Time (tùy chọn - giờ:phút:giây)</label>
-                        <input type="text" id="completionTime" placeholder="e.g., 1:45:30 or 45:20" value="30:01:52">
+                        <input type="text" id="completionTime" placeholder="e.g., 1:45:30 or 45:20">
                     </div>
 
                     <div class="form-group">
                         <label for="eventType">Event Type</label>
                         <select id="eventType" required>
-                            <option value="Huyền Thoại PMHR 2025">Huyền Thoại PMHR 2025</option>
+                            <option value="Huyền Thoại của PMHR 2025 (LOP)">Huyền Thoại của PMHR 2025 (LOP)</option>
+                            <option value="Huyền Thoại của PMHR 2024 (LOP)">Huyền Thoại của PMHR 2024 (LOP)</option>
                         </select>
                     </div>
 
@@ -580,7 +590,8 @@
 
             certificateHTML += '<div style="text-align: center; margin: 10px 0;">';
             certificateHTML += '<div class="runner-name">' + name + '</div>';
-            certificateHTML += '<div class="runner-awarded">Đã hoàn thành Thử thách 45 ngày và được chính thức công nhận là Huyền Thoại của PMHR 2025 (LOP)</div>';
+            certificateHTML += '<div class="runner-awarded">Đã hoàn thành Thử thách 45 ngày <br> và được chính thức công nhận là</div>';
+            certificateHTML += '<div class="runner-event-type">' + eventType + '</div>';
 
 
             certificateHTML += '</div>';
